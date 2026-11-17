@@ -1,0 +1,58 @@
+/* Shared company identity; the original CMYK interface remains intact. */
+.company-logo {
+  display: block;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+}
+.company-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+.company-name small {
+  color: #c9bde8;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.company-name strong {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+.mobile-header .company-name small,
+.mobile-brand .company-name small {
+  margin: 0;
+  color: #c9bde8;
+  font-size: 8px;
+}
+.mobile-header .company-logo,
+.mobile-brand .company-logo {
+  width: 38px;
+  height: 38px;
+  flex-basis: 38px;
+}
+.mobile-header .company-name strong,
+.mobile-brand .company-name strong {
+  font-size: 19px;
+}
+.company-area {
+  margin-left: auto;
+  font-size: 10px;
+  color: #a9b5ca;
+  letter-spacing: 0;
+}
+@media (max-width: 360px) {
+  .company-area {
+    font-size: 9px;
+  }
+}

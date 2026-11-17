@@ -1,0 +1,17 @@
+{
+  "mode": "firebase",
+  "firebase": {
+    "apiKey": "AIzaSyAdjJ3IoWzXqzzj8bdHDd8NFB3JzC4a1H4",
+    "authDomain": "alerta-grafica-armazem.firebaseapp.com",
+    "projectId": "alerta-grafica-armazem",
+    "appId": "1:31645107838:web:ac0d9511c6ef1f206e3a2f",
+    "databaseURL": "https://alerta-grafica-armazem-default-rtdb.firebaseio.com",
+    "storageBucket": "alerta-grafica-armazem.firebasestorage.app",
+    "messagingSenderId": "31645107838"
+  },
+  "useEmulators": false,
+  "emulators": {
+    "authPort": 9099,
+    "databasePort": 9000
+  }
+}

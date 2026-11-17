@@ -1,0 +1,44 @@
+# Firebase credentials - NEVER commit
+public/firebase-config.local.json
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Misc
+*.pem
+*.key
+*.crt
+
+# Reference sources and local visual checks
+.reference/
+.artifacts/

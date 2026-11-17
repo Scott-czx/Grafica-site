@@ -1,0 +1,154 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "acessos": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": false
+      }
+    },
+    "solicitacoes": {
+      ".read": "auth != null && (root.child('acessos').child(auth.uid).val() == 'grafica' || root.child('acessos').child(auth.uid).val() == 'armazem' || root.child('acessos').child(auth.uid).val() == 'admin')",
+      ".indexOn": ["status", "criadoEm"],
+      "$id": {
+        ".write": "auth != null && (root.child('acessos').child(auth.uid).val() == 'admin' || ((!data.exists() && newData.exists() && root.child('acessos').child(auth.uid).val() == 'grafica') || (data.exists() && root.child('acessos').child(auth.uid).val() == 'grafica' && (!newData.exists() || (newData.child('status').val() == data.child('status').val() && newData.child('valor').val() == data.child('valor').val() && newData.child('atendidoEm').val() == data.child('atendidoEm').val()))) || (data.exists() && newData.exists() && root.child('acessos').child(auth.uid).val() == 'armazem' && data.child('status').val() == 'pendente' && newData.child('status').val() == 'atendido' && newData.child('tipo').val() == data.child('tipo').val() && newData.child('valor').val() == data.child('valor').val())))",
+        ".validate": "newData.hasChildren(['tipo','valor','status','criadoEm','criadoPor']) && (data.exists() || (newData.child('status').val() == 'pendente' && !newData.hasChild('atendidoEm'))) && ((newData.child('status').val() == 'pendente' && !newData.hasChild('atendidoEm')) || (newData.child('status').val() == 'atendido' && newData.hasChild('atendidoEm')))",
+        "tipo": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 50"
+        },
+        "valor": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999999.99"
+        },
+        "status": {
+          ".validate": "newData.val() == 'pendente' || newData.val() == 'atendido'"
+        },
+        "criadoEm": {
+          ".validate": "newData.isNumber() && ((!data.exists() && newData.val() >= now - 60000 && newData.val() <= now) || (data.exists() && newData.val() == data.val()))"
+        },
+        "criadoPor": {
+          ".validate": "newData.isString() && ((!data.exists() && newData.val() == auth.uid) || (data.exists() && newData.val() == data.val()))"
+        },
+        "atendidoEm": {
+          ".validate": "newData.isNumber() && ((data.exists() && newData.val() == data.val()) || (!data.exists() && newData.val() >= now - 60000 && newData.val() <= now))"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "inkflow": {
+      "v1": {
+        "requests": {
+          ".read": "auth != null",
+          ".indexOn": ["createdBy", "status", "recordedAt"],
+          "$id": {
+            ".read": "auth != null",
+            ".write": "auth != null && newData.exists()",
+            ".validate": "newData.hasChildren(['id','createdAt','requester','department','priority','neededBy','notes','items','createdBy','recordedAt','status','version','updatedAt']) && (data.exists() || newData.child('status').val() == 'Pendente')",
+            "id": {
+              ".validate": "newData.isString() && newData.val() == $id && $id.matches(/^IF-[A-Za-z0-9_-]{1,76}$/) && (!data.exists() || newData.val() == data.val())"
+            },
+            "createdAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 24 && (!data.exists() || newData.val() == data.val()) && newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}([.][0-9]{3})?Z$/)"
+            },
+            "requester": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 90 && (!data.exists() || newData.val() == data.val())"
+            },
+            "department": {
+              ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 90 && (!data.exists() || newData.val() == data.val())"
+            },
+            "notes": {
+              ".validate": "newData.isString() && newData.val().length >= 0 && newData.val().length <= 500 && (!data.exists() || newData.val() == data.val())"
+            },
+            "neededBy": {
+              ".validate": "newData.isString() && newData.val().length >= 0 && newData.val().length <= 10 && (!data.exists() || newData.val() == data.val()) && (newData.val() == '' || newData.val().matches(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/))"
+            },
+            "priority": {
+              ".validate": "(newData.val() == 'Alta' || newData.val() == 'Normal') && (!data.exists() || newData.val() == data.val())"
+            },
+            "createdBy": {
+              ".validate": "newData.isString() && (data.exists() || newData.val() == auth.uid) && (!data.exists() || newData.val() == data.val())"
+            },
+            "recordedAt": {
+              ".validate": "newData.isNumber() && (data.exists() || (newData.val() >= now - 60000 && newData.val() <= now)) && (!data.exists() || newData.val() == data.val())"
+            },
+            "status": {
+              ".validate": "newData.val() == 'Pendente' || newData.val() == 'Em produção' || newData.val() == 'Pronto' || newData.val() == 'Concluído'"
+            },
+            "version": {
+              ".validate": "newData.isNumber() && ((!data.exists() && newData.val() == 1) || (data.exists() && newData.val() == data.val() + 1))"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber() && newData.val() >= now - 60000 && newData.val() <= now"
+            },
+            "items": {
+              ".validate": "newData.hasChild('0') && ((!data.hasChild('0') || newData.hasChild('0')) && (!data.hasChild('1') || newData.hasChild('1')) && (!data.hasChild('2') || newData.hasChild('2')) && (!data.hasChild('3') || newData.hasChild('3')) && (!data.hasChild('4') || newData.hasChild('4')) && (!data.hasChild('5') || newData.hasChild('5')) && (!data.hasChild('6') || newData.hasChild('6')) && (!data.hasChild('7') || newData.hasChild('7')) && (!data.hasChild('8') || newData.hasChild('8')) && (!data.hasChild('9') || newData.hasChild('9')) && (!data.hasChild('10') || newData.hasChild('10')) && (!data.hasChild('11') || newData.hasChild('11')) && (!data.hasChild('12') || newData.hasChild('12')) && (!data.hasChild('13') || newData.hasChild('13')) && (!data.hasChild('14') || newData.hasChild('14')) && (!data.hasChild('15') || newData.hasChild('15')) && (!data.hasChild('16') || newData.hasChild('16')) && (!data.hasChild('17') || newData.hasChild('17')) && (!data.hasChild('18') || newData.hasChild('18')) && (!data.hasChild('19') || newData.hasChild('19')) && (!data.hasChild('20') || newData.hasChild('20')) && (!data.hasChild('21') || newData.hasChild('21')) && (!data.hasChild('22') || newData.hasChild('22')) && (!data.hasChild('23') || newData.hasChild('23')) && (!data.hasChild('24') || newData.hasChild('24')) && (!data.hasChild('25') || newData.hasChild('25')) && (!data.hasChild('26') || newData.hasChild('26')) && (!data.hasChild('27') || newData.hasChild('27')) && (!data.hasChild('28') || newData.hasChild('28')) && (!data.hasChild('29') || newData.hasChild('29')) && (!data.hasChild('30') || newData.hasChild('30')) && (!data.hasChild('31') || newData.hasChild('31')) && (!data.hasChild('32') || newData.hasChild('32')) && (!data.hasChild('33') || newData.hasChild('33')) && (!data.hasChild('34') || newData.hasChild('34')) && (!data.hasChild('35') || newData.hasChild('35')) && (!data.hasChild('36') || newData.hasChild('36')) && (!data.hasChild('37') || newData.hasChild('37')) && (!data.hasChild('38') || newData.hasChild('38')) && (!data.hasChild('39') || newData.hasChild('39')) && (!data.hasChild('40') || newData.hasChild('40')) && (!data.hasChild('41') || newData.hasChild('41')) && (!data.hasChild('42') || newData.hasChild('42')) && (!data.hasChild('43') || newData.hasChild('43')) && (!data.hasChild('44') || newData.hasChild('44')) && (!data.hasChild('45') || newData.hasChild('45')) && (!data.hasChild('46') || newData.hasChild('46')) && (!data.hasChild('47') || newData.hasChild('47')) && (!data.hasChild('48') || newData.hasChild('48')) && (!data.hasChild('49') || newData.hasChild('49')) && (!data.hasChild('50') || newData.hasChild('50')) && (!data.hasChild('51') || newData.hasChild('51')) && (!data.hasChild('52') || newData.hasChild('52')) && (!data.hasChild('53') || newData.hasChild('53')) && (!data.hasChild('54') || newData.hasChild('54')) && (!data.hasChild('55') || newData.hasChild('55')) && (!data.hasChild('56') || newData.hasChild('56')) && (!data.hasChild('57') || newData.hasChild('57')) && (!data.hasChild('58') || newData.hasChild('58')) && (!data.hasChild('59') || newData.hasChild('59')) && (!data.hasChild('60') || newData.hasChild('60')) && (!data.hasChild('61') || newData.hasChild('61')) && (!data.hasChild('62') || newData.hasChild('62')) && (!data.hasChild('63') || newData.hasChild('63')) && (!data.hasChild('64') || newData.hasChild('64')) && (!data.hasChild('65') || newData.hasChild('65')) && (!data.hasChild('66') || newData.hasChild('66')) && (!data.hasChild('67') || newData.hasChild('67')) && (!data.hasChild('68') || newData.hasChild('68')) && (!data.hasChild('69') || newData.hasChild('69')) && (!data.hasChild('70') || newData.hasChild('70')) && (!data.hasChild('71') || newData.hasChild('71')) && (!data.hasChild('72') || newData.hasChild('72')) && (!data.hasChild('73') || newData.hasChild('73')) && (!data.hasChild('74') || newData.hasChild('74')) && (!data.hasChild('75') || newData.hasChild('75')) && (!data.hasChild('76') || newData.hasChild('76')) && (!data.hasChild('77') || newData.hasChild('77')) && (!data.hasChild('78') || newData.hasChild('78')) && (!data.hasChild('79') || newData.hasChild('79')))",
+              "$index": {
+                ".validate": "$index.matches(/^(0|[1-7]?[0-9])$/) && newData.hasChildren(['id','name','quantity','unit','note']) && (!root.child('inkflow/v1/requests').child($id).exists() || (data.exists() && (!data.child('options').hasChild('0') || newData.child('options').hasChild('0')) && (!data.child('options').hasChild('1') || newData.child('options').hasChild('1')) && (!data.child('options').hasChild('2') || newData.child('options').hasChild('2')) && (!data.child('options').hasChild('3') || newData.child('options').hasChild('3')) && (!data.child('options').hasChild('4') || newData.child('options').hasChild('4')) && (!data.child('options').hasChild('5') || newData.child('options').hasChild('5')) && (!data.child('options').hasChild('6') || newData.child('options').hasChild('6')) && (!data.child('options').hasChild('7') || newData.child('options').hasChild('7')) && (!data.child('options').hasChild('8') || newData.child('options').hasChild('8')) && (!data.child('options').hasChild('9') || newData.child('options').hasChild('9')) && (!data.child('options').hasChild('10') || newData.child('options').hasChild('10')) && (!data.child('options').hasChild('11') || newData.child('options').hasChild('11')) && (!data.child('options').hasChild('12') || newData.child('options').hasChild('12')) && (!data.child('options').hasChild('13') || newData.child('options').hasChild('13')) && (!data.child('options').hasChild('14') || newData.child('options').hasChild('14'))))",
+                "id": {
+                  ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 30 && (!data.exists() || newData.val() == data.val())"
+                },
+                "name": {
+                  ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 100 && (!data.exists() || newData.val() == data.val())"
+                },
+                "unit": {
+                  ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 50 && (!data.exists() || newData.val() == data.val())"
+                },
+                "note": {
+                  ".validate": "newData.isString() && newData.val().length >= 0 && newData.val().length <= 350 && (!data.exists() || newData.val() == data.val())"
+                },
+                "quantity": {
+                  ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10000000 && newData.val() % 1 == 0 && (!data.exists() || newData.val() == data.val())"
+                },
+                "options": {
+                  ".validate": "newData.hasChild('0') && (!root.child('inkflow/v1/requests').child($id).exists() || data.exists())",
+                  "$option": {
+                    ".validate": "$option.matches(/^([0-9]|1[0-4])$/) && newData.hasChildren(['label','value']) && (!root.child('inkflow/v1/requests').child($id).exists() || data.exists())",
+                    "label": {
+                      ".validate": "newData.isString() && newData.val().length <= 70 && (!data.exists() || newData.val() == data.val())"
+                    },
+                    "value": {
+                      ".validate": "newData.isString() && newData.val().length <= 140 && (!data.exists() || newData.val() == data.val())"
+                    },
+                    "$other": {
+                      ".validate": false
+                    }
+                  }
+                },
+                "$other": {
+                  ".validate": false
+                }
+              }
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "internal": {
+          ".read": "auth != null",
+          "$id": {
+            ".write": "auth != null && root.child('inkflow/v1/requests').child($id).exists() && newData.exists()",
+            ".validate": "newData.hasChildren(['assignee','note','version','updatedAt']) && newData.child('version').val() == root.child('inkflow/v1/requests').child($id).child('version').val() + 1 && newData.child('version').val() == newData.parent().parent().child('requests').child($id).child('version').val()",
+            "assignee": {
+              ".validate": "newData.isString() && newData.val().length <= 80"
+            },
+            "note": {
+              ".validate": "newData.isString() && newData.val().length <= 600"
+            },
+            "version": {
+              ".validate": "newData.isNumber() && newData.val() % 1 == 0"
+            },
+            "updatedAt": {
+              ".validate": "newData.isNumber() && newData.val() >= now - 60000 && newData.val() <= now"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

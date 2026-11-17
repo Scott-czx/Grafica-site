@@ -1,0 +1,40 @@
+{
+  "name": "alerta-grafica-armazem",
+  "version": "2024.1.0",
+  "description": "Sistema de gest\u00e3o de pedidos para gr\u00e1fica com fila de produ\u00e7\u00e3o em tempo real",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "build": "npm run validate && npm run check:hosting && npm test",
+    "lint": "eslint public/js tests scripts --ext .js --max-warnings 0",
+    "lint:fix": "eslint public/js tests scripts --ext .js --fix",
+    "format": "prettier --write \"public/**/*.{html,js,json}\" \"firebase/**/*.json\" \"tests/**/*.js\" \"scripts/**/*.js\" \"docs/**/*.md\" \"*.{json,md}\"",
+    "format:check": "prettier --check \"**/*.{html,css,js,json,md}\"",
+    "validate": "npm run lint && npm run format:check",
+    "deploy": "firebase deploy",
+    "deploy:rules": "firebase deploy --only database",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "test": "node --experimental-vm-modules scripts/test.js",
+    "emulators": "firebase emulators:start --project demo-alerta --only auth,database",
+    "test:rules": "firebase emulators:exec --project demo-alerta --only database \"node tests/database.integration.js\"",
+    "check:hosting": "node scripts/check-hosting.js"
+  },
+  "keywords": [
+    "firebase",
+    "print-shop",
+    "order-management",
+    "realtime",
+    "pwa"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5",
+    "serve-handler": "^6.1.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module"
+}
